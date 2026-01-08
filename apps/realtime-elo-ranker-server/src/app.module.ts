@@ -4,6 +4,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PlayersModule } from './players/players.module';
+import { MatchesModule } from './matches/matches.module';
 
 @Module({
   imports: [
@@ -17,6 +18,8 @@ import { PlayersModule } from './players/players.module';
     }),
     
     PlayersModule,
+    
+    MatchesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

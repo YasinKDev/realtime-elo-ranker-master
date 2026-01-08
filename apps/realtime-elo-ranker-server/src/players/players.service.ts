@@ -31,4 +31,7 @@ export class PlayersService {
 
     return this.playerRepository.save(player);
   }
+  async save(player: Player): Promise<Player> {
+    return this.playerRepository.save(player);
+  }
 }

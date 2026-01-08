@@ -13,6 +13,7 @@ const event_emitter_1 = require("@nestjs/event-emitter");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const players_module_1 = require("./players/players.module");
+const matches_module_1 = require("./matches/matches.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -27,6 +28,7 @@ exports.AppModule = AppModule = __decorate([
                 synchronize: true,
             }),
             players_module_1.PlayersModule,
+            matches_module_1.MatchesModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

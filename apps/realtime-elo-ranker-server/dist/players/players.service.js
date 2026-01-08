@@ -38,6 +38,9 @@ let PlayersService = class PlayersService {
         });
         return this.playerRepository.save(player);
     }
+    async save(player) {
+        return this.playerRepository.save(player);
+    }
 };
 exports.PlayersService = PlayersService;
 exports.PlayersService = PlayersService = __decorate([

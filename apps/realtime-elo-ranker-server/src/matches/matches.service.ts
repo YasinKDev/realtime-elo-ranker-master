@@ -1,13 +1,18 @@
-import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { PlayersService } from '../players/players.service';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { Player } from '../players/player.entity';
+import { RankingUpdateEvent } from '../ranking/ranking-update.event';
 
 @Injectable()
 export class MatchesService {
   private readonly K_FACTOR = 32;
 
-  constructor(private readonly playersService: PlayersService) {}
+  constructor(
+    private readonly playersService: PlayersService,
+    private readonly eventEmitter: EventEmitter2,
+  ) {}
 
   async recordMatch(createMatchDto: CreateMatchDto) {
     const { winner: winnerId, loser: loserId, draw } = createMatchDto;
@@ -16,13 +21,22 @@ export class MatchesService {
     const loser = await this.playersService.findOne(loserId);
 
     if (!winner || !loser) {
-      throw new UnprocessableEntityException('Un des joueurs n\'existe pas');
+      throw new UnprocessableEntityException("Un des joueurs n'existe pas");
     }
 
     this.calculateElo(winner, loser, draw);
 
     await this.playersService.save(winner);
     await this.playersService.save(loser);
+
+    this.eventEmitter.emit(
+      'ranking.update',
+      new RankingUpdateEvent(winner.id, winner.rank),
+    );
+    this.eventEmitter.emit(
+      'ranking.update',
+      new RankingUpdateEvent(loser.id, loser.rank),
+    );
 
     return { winner, loser };
   }

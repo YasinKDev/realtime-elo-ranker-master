@@ -11,23 +11,29 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MatchesService = void 0;
 const common_1 = require("@nestjs/common");
+const event_emitter_1 = require("@nestjs/event-emitter");
 const players_service_1 = require("../players/players.service");
+const ranking_update_event_1 = require("../ranking/ranking-update.event");
 let MatchesService = class MatchesService {
     playersService;
+    eventEmitter;
     K_FACTOR = 32;
-    constructor(playersService) {
+    constructor(playersService, eventEmitter) {
         this.playersService = playersService;
+        this.eventEmitter = eventEmitter;
     }
     async recordMatch(createMatchDto) {
         const { winner: winnerId, loser: loserId, draw } = createMatchDto;
         const winner = await this.playersService.findOne(winnerId);
         const loser = await this.playersService.findOne(loserId);
         if (!winner || !loser) {
-            throw new common_1.UnprocessableEntityException('Un des joueurs n\'existe pas');
+            throw new common_1.UnprocessableEntityException("Un des joueurs n'existe pas");
         }
         this.calculateElo(winner, loser, draw);
         await this.playersService.save(winner);
         await this.playersService.save(loser);
+        this.eventEmitter.emit('ranking.update', new ranking_update_event_1.RankingUpdateEvent(winner.id, winner.rank));
+        this.eventEmitter.emit('ranking.update', new ranking_update_event_1.RankingUpdateEvent(loser.id, loser.rank));
         return { winner, loser };
     }
     calculateElo(playerA, playerB, isDraw) {
@@ -42,6 +48,7 @@ let MatchesService = class MatchesService {
 exports.MatchesService = MatchesService;
 exports.MatchesService = MatchesService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [players_service_1.PlayersService])
+    __metadata("design:paramtypes", [players_service_1.PlayersService,
+        event_emitter_1.EventEmitter2])
 ], MatchesService);
 //# sourceMappingURL=matches.service.js.map

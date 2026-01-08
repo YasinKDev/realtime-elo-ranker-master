@@ -8,4 +8,5 @@ export declare class RankingService implements OnModuleInit {
     onModuleInit(): Promise<void>;
     getRanking(): Player[];
     updateRanking(): Promise<void>;
+    handleRankingUpdate(): Promise<void>;
 }

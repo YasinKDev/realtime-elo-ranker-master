@@ -1,4 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
 import { PlayersService } from '../players/players.service';
 import { Player } from '../players/player.entity';
 
@@ -19,5 +20,10 @@ export class RankingService implements OnModuleInit {
   async updateRanking(): Promise<void> {
     const players = await this.playersService.findAll();
     this.ranking = players.sort((a, b) => b.rank - a.rank);
+  }
+
+  @OnEvent('ranking.update')
+  async handleRankingUpdate() {
+    await this.updateRanking();
   }
 }

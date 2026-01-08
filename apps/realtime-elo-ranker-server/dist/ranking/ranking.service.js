@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RankingService = void 0;
 const common_1 = require("@nestjs/common");
+const event_emitter_1 = require("@nestjs/event-emitter");
 const players_service_1 = require("../players/players.service");
 let RankingService = class RankingService {
     playersService;
@@ -28,8 +29,17 @@ let RankingService = class RankingService {
         const players = await this.playersService.findAll();
         this.ranking = players.sort((a, b) => b.rank - a.rank);
     }
+    async handleRankingUpdate() {
+        await this.updateRanking();
+    }
 };
 exports.RankingService = RankingService;
+__decorate([
+    (0, event_emitter_1.OnEvent)('ranking.update'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], RankingService.prototype, "handleRankingUpdate", null);
 exports.RankingService = RankingService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [players_service_1.PlayersService])

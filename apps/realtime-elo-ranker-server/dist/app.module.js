@@ -14,6 +14,7 @@ const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const players_module_1 = require("./players/players.module");
 const matches_module_1 = require("./matches/matches.module");
+const ranking_module_1 = require("./ranking/ranking.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -29,6 +30,7 @@ exports.AppModule = AppModule = __decorate([
             }),
             players_module_1.PlayersModule,
             matches_module_1.MatchesModule,
+            ranking_module_1.RankingModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

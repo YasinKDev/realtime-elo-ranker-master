@@ -18,5 +18,15 @@
     "motion": "catalog:",
     "next": "catalog:",
     "typescript": "catalog:"
+  },
+  "dependencies": {
+    "sqlite3": "^5.1.7"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "sqlite3",
+      "@nestjs/core",
+      "@scarf/scarf"
+    ]
   }
 }

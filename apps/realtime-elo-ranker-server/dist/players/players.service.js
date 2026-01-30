@@ -16,17 +16,24 @@ exports.PlayersService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
+const event_emitter_1 = require("@nestjs/event-emitter");
 const player_entity_1 = require("./player.entity");
+const ranking_update_event_1 = require("../ranking/ranking-update.event");
 let PlayersService = class PlayersService {
     playerRepository;
-    constructor(playerRepository) {
+    eventEmitter;
+    constructor(playerRepository, eventEmitter) {
         this.playerRepository = playerRepository;
+        this.eventEmitter = eventEmitter;
     }
     async findAll() {
         return this.playerRepository.find();
     }
     async findOne(id) {
         return this.playerRepository.findOneBy({ id });
+    }
+    async save(player) {
+        return this.playerRepository.save(player);
     }
     async create(createPlayerDto) {
         const existingPlayer = await this.findOne(createPlayerDto.id);
@@ -36,16 +43,16 @@ let PlayersService = class PlayersService {
         const player = this.playerRepository.create({
             id: createPlayerDto.id,
         });
-        return this.playerRepository.save(player);
-    }
-    async save(player) {
-        return this.playerRepository.save(player);
+        const savedPlayer = await this.playerRepository.save(player);
+        this.eventEmitter.emit('ranking.update', new ranking_update_event_1.RankingUpdateEvent(savedPlayer.id, savedPlayer.rank));
+        return savedPlayer;
     }
 };
 exports.PlayersService = PlayersService;
 exports.PlayersService = PlayersService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(player_entity_1.Player)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        event_emitter_1.EventEmitter2])
 ], PlayersService);
 //# sourceMappingURL=players.service.js.map
